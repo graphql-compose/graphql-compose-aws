@@ -1,0 +1,81 @@
+{
+  "name": "graphql-compose-aws",
+  "version": "0.0.0-semantically-released",
+  "description": "Elastic search via GraphQL",
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/graphql-compose/graphql-compose-aws.git"
+  },
+  "keywords": [
+    "graphql",
+    "aws",
+    "aws sdk",
+    "graphql-compose"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/graphql-compose/graphql-compose-aws/issues"
+  },
+  "homepage": "https://github.com/graphql-compose/graphql-compose-aws#readme",
+  "dependencies": {
+    "babel-runtime": "^6.26.0"
+  },
+  "peerDependencies": {
+    "graphql-compose": ">=2.10.1"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.158.0",
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.0.2",
+    "babel-jest": "^21.2.0",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^4.12.0",
+    "eslint-config-airbnb-base": "^12.0.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "^2.37.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "^2.3.1",
+    "express": "^4.16.1",
+    "express-graphql": "^0.6.11",
+    "flow-bin": "^0.59.0",
+    "graphql": "^0.11.7",
+    "graphql-compose": "^2.10.1",
+    "jest": "^21.2.1",
+    "nodemon": "^1.12.1",
+    "npm-run-all": "^4.1.2",
+    "prettier": "^1.8.2",
+    "rimraf": "^2.6.2",
+    "semantic-release": "^8.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ]
+  },
+  "scripts": {
+    "build": "npm-run-all build:*",
+    "build:lib": "rimraf lib && babel src --ignore __tests__,__mocks__ -d lib",
+    "build:flow": "find ./src -name '*.js' -not -path '*/__*' | while read filepath; do cp $filepath `echo $filepath | sed 's/\\/src\\//\\/lib\\//g'`.flow; done",
+    "dev": "npm run demo1",
+    "demo": "nodemon -e js --ignore *test* --exec ./node_modules/.bin/babel-node ./examples/fullApi/index.js",
+    "watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "lint": "eslint --ext .js ./src",
+    "flow": "./node_modules/.bin/flow",
+    "test": "npm run coverage && npm run lint && npm run flow",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  }
+}
