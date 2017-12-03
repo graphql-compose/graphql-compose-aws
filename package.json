@@ -1,7 +1,7 @@
 {
   "name": "graphql-compose-aws",
   "version": "0.0.0-semantically-released",
-  "description": "Elastic search via GraphQL",
+  "description": "AWS Cloud API via GraphQL",
   "files": [
     "lib"
   ],
@@ -13,6 +13,7 @@
   "keywords": [
     "graphql",
     "aws",
+    "amazon cloud",
     "aws sdk",
     "graphql-compose"
   ],

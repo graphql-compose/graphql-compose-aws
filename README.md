@@ -8,7 +8,7 @@ graphql-compose-aws
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Greenkeeper badge](https://badges.greenkeeper.io/graphql-compose/graphql-compose-aws.svg)](https://greenkeeper.io/)
 
-This module expose AWS SDK API via GraphQL.
+This module expose AWS Cloud API via GraphQL.
 
 #### Live demo of [AWS SDK API via Graphiql](https://graphql-compose.herokuapp.com/aws/)
 Generated Schema Introspection in SDL format can be found [here](https://raw.githubusercontent.com/graphql-compose/graphql-compose-aws/master/examples/introspection/schema.txt) (more than 10k types, ~2MB).
