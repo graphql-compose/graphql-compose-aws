@@ -12,7 +12,8 @@ const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
     fields: {
-      aws: awsApiParser.getFieldConfig(),
+      s3: awsApiParser.getService('s3').getFieldConfig(),
+      ec2: awsApiParser.getService('ec2').getFieldConfig(),
     },
   }),
 });
