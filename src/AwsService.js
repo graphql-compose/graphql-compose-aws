@@ -1,11 +1,12 @@
 /* @flow */
 
 import { TypeComposer, upperFirst } from 'graphql-compose';
-import type { GraphQLObjectType } from 'graphql-compose/lib/graphql';
+import type { GraphQLObjectType, GraphQLFieldConfig } from 'graphql-compose/lib/graphql';
 import AwsServiceMetadata, { type ServiceMetadataConfig } from './AwsServiceMetadata';
 import AwsServiceOperation, { type ServiceOperationConfig } from './AwsServiceOperation';
 import AwsShapes, { type ShapesMap } from './AwsShapes';
 import type { AwsSDK } from './AwsApiParser';
+import AwsConfigITC from './types/AwsConfigITC';
 
 export type ServiceConfig = {
   version: string,
@@ -48,6 +49,10 @@ export default class AwsService {
     return `${this.prefix}${upperFirst(this.serviceId)}`;
   }
 
+  static lowerFirst(name: string) {
+    return name.charAt(0).toLowerCase() + name.slice(1);
+  }
+
   getOperationNames(): string[] {
     return Object.keys(this.config.operations);
   }
@@ -59,7 +64,7 @@ export default class AwsService {
     }
     return new AwsServiceOperation({
       serviceId: this.serviceId,
-      name,
+      name: this.constructor.lowerFirst(name),
       prefix: this.prefix,
       config: operConfig,
       shapes: this.shapes,
@@ -70,7 +75,7 @@ export default class AwsService {
   getTypeComposer(): TypeComposer {
     if (!this.tc) {
       const fields = this.getOperationNames().reduce((res, name) => {
-        res[name] = this.getOperation(name).getFieldConfig();
+        res[this.constructor.lowerFirst(name)] = this.getOperation(name).getFieldConfig();
         return res;
       }, {});
 
@@ -85,5 +90,20 @@ export default class AwsService {
 
   getType(): GraphQLObjectType {
     return this.getTypeComposer().getType();
+  }
+
+  getFieldConfig(): GraphQLFieldConfig<any, any> {
+    return {
+      type: this.getType(),
+      args: {
+        config: {
+          type: AwsConfigITC.getType(),
+          description: 'Will override default configs for aws-sdk.',
+        },
+      },
+      resolve: (source, args) => ({
+        awsConfig: { ...(source && source.awsConfig), ...(args && args.config) },
+      }),
+    };
   }
 }

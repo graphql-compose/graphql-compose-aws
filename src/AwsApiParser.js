@@ -3,6 +3,7 @@
 import { TypeComposer } from 'graphql-compose';
 import type { GraphQLObjectType, GraphQLFieldConfig } from 'graphql-compose/lib/graphql';
 import AwsService, { type ServiceConfig } from './AwsService';
+import AwsConfigITC from './types/AwsConfigITC';
 
 export type AwsSDK = any;
 
@@ -15,22 +16,41 @@ export default class AwsApiParser {
   name: string;
   awsSDK: AwsSDK;
   tc: TypeComposer;
+  _serviceMap: { [serviceIdentifier: string]: string };
 
   constructor(opts: AwsOpts) {
     this.name = opts.name || 'Aws';
     this.awsSDK = opts.awsSDK;
+
+    this._serviceMap = {};
+    this.getServicesNames();
   }
 
   getServicesNames(): string[] {
-    const serviceNames = Object.keys(this.awsSDK.apiLoader.services);
+    const serviceNames = Object.keys(this.awsSDK).reduce((res, name) => {
+      if (this.awsSDK[name].serviceIdentifier) {
+        this._serviceMap[this.awsSDK[name].serviceIdentifier] = name;
+        res.push(name);
+      }
+      return res;
+    }, []);
     serviceNames.sort();
     return serviceNames;
   }
 
+  getServiceIdentifier(name: string): string {
+    if (this._serviceMap[name]) return name;
+
+    if (!this.awsSDK[name]) {
+      throw new Error(`Service with name '${name}' does not exist. Run AwsApiParser.`);
+    }
+    return this.awsSDK[name].serviceIdentifier;
+  }
+
   getServiceConfig(name: string): ServiceConfig {
-    const cfg = this.awsSDK.apiLoader.services[name];
+    const cfg = this.awsSDK.apiLoader.services[this.getServiceIdentifier(name)];
     if (!cfg) {
-      throw new Error(`Service with name ${name} does not exist.`);
+      throw new Error(`Service with name '${name}' does not exist.`);
     }
     const versions = Object.keys(cfg);
     if (versions.length === 1) {
@@ -42,10 +62,12 @@ export default class AwsApiParser {
   }
 
   getService(name: string): AwsService {
+    const config = this.getServiceConfig(name);
+    // console.log(config);
     return new AwsService({
-      serviceId: name,
+      serviceId: this._serviceMap[name] || name,
       prefix: this.name,
-      config: this.getServiceConfig(name),
+      config,
       awsSDK: this.awsSDK,
     });
   }
@@ -53,7 +75,7 @@ export default class AwsApiParser {
   getTypeComposer(): TypeComposer {
     if (!this.tc) {
       const fields = this.getServicesNames().reduce((res, name) => {
-        res[name] = this.getService(name).getTypeComposer();
+        res[this.getServiceIdentifier(name)] = this.getService(name).getFieldConfig();
         return res;
       }, {});
 
@@ -73,6 +95,15 @@ export default class AwsApiParser {
   getFieldConfig(): GraphQLFieldConfig<any, any> {
     return {
       type: this.getType(),
+      args: {
+        config: {
+          type: AwsConfigITC.getType(),
+          description: 'Will override default configs for aws-sdk.',
+        },
+      },
+      resolve: (source, args) => ({
+        awsConfig: { ...(source && source.awsConfig), ...(args && args.config) },
+      }),
       description: this.getTypeComposer().getDescription(),
     };
   }

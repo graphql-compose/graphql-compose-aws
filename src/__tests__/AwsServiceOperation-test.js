@@ -1,4 +1,5 @@
 /* @flow */
+/* eslint-disable class-methods-use-this */
 
 import {
   GraphQLInputObjectType,
@@ -7,6 +8,7 @@ import {
   isOutputType,
 } from 'graphql-compose/lib/graphql';
 import AwsServiceOperation from '../AwsServiceOperation';
+import AwsConfigITC from '../types/AwsConfigITC';
 
 const operations = {
   CreateBucket: {
@@ -73,9 +75,9 @@ const operations = {
 };
 
 describe('AwsJsonParserOperation', () => {
-  const AWSMock = {
-    S3: {
-      CreateBucket: jest.fn(),
+  const AWSMock: any = {
+    S3: class S3 {
+      CreateBucket(args, cb) {} // eslint-disable-line
     },
   };
 
@@ -114,21 +116,25 @@ describe('AwsJsonParserOperation', () => {
     });
 
     it('resolves', async () => {
-      AWSMock.S3.CreateBucket = jest.fn((args, cb) => {
-        cb(undefined, { payload: args });
-      });
-      const res = await resolve({}, { arg: 123 }, ({}: any), ({}: any));
+      AWSMock.S3 = class S3WithPayload {
+        CreateBucket(args, cb) {
+          cb(undefined, { payload: args });
+        }
+      };
+      const res = await resolve({}, { input: { arg: 123 } }, ({}: any), ({}: any));
       expect(res).toEqual({ payload: { arg: 123 } });
     });
 
     it('rejects', async () => {
-      AWSMock.S3.CreateBucket = jest.fn((args, cb) => {
-        cb('err');
-      });
+      AWSMock.S3 = class S3WithError {
+        CreateBucket(args, cb) {
+          cb('err');
+        }
+      };
 
       expect.assertions(1);
       try {
-        await resolve({}, { arg: 123 }, ({}: any), ({}: any));
+        await resolve({}, {}, ({}: any), ({}: any));
       } catch (e) {
         expect(e).toBe('err');
       }
@@ -136,10 +142,9 @@ describe('AwsJsonParserOperation', () => {
   });
 
   it('getFieldConfig()', () => {
-    const fc = oper.getFieldConfig();
+    const fc: any = oper.getFieldConfig();
     expect(fc.type).toBeInstanceOf(GraphQLObjectType);
-    expect(fc.args).toBeDefined();
+    expect(fc.args.config.type).toBe(AwsConfigITC.getType());
     expect((fc.resolve: any).call).toBeDefined();
-    expect(fc.description).toBe('S3.CreateBucket');
   });
 });

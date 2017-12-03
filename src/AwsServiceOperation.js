@@ -10,6 +10,7 @@ import type {
 import AwsParam, { type ParamStructure } from './AwsParam';
 import type AwsShapes from './AwsShapes';
 import type { AwsSDK } from './AwsApiParser';
+import AwsConfigITC from './types/AwsConfigITC';
 
 export type ServiceOperationConfig = {
   http?: {
@@ -97,6 +98,10 @@ export default class AwsServiceOperation {
           },
         };
       }
+
+      this.args.config = {
+        type: AwsConfigITC.getType(),
+      };
     }
 
     return this.args;
@@ -105,7 +110,12 @@ export default class AwsServiceOperation {
   getResolve(): GraphQLFieldResolver<any, any> {
     return ((source: any, args: { [argument: string]: any }) => {
       return new Promise((resolve, reject) => {
-        this.awsSDK[this.serviceId][this.name](args, (err, data) => {
+        const awsConfig = {
+          ...(source && source.awsConfig),
+          ...(args && args.config),
+        };
+        const service = new this.awsSDK[this.serviceId](awsConfig);
+        service[this.name](args.input, (err, data) => {
           if (err) {
             reject(err);
           }
@@ -120,7 +130,6 @@ export default class AwsServiceOperation {
       type: this.getType(),
       args: this.getArgs(),
       resolve: this.getResolve(),
-      description: `${this.serviceId}.${this.name}`,
     };
   }
 }
