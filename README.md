@@ -1,5 +1,5 @@
-[WIP] graphql-compose-aws
-======================
+graphql-compose-aws
+===================
 
 [![](https://img.shields.io/npm/v/graphql-compose-aws.svg)](https://www.npmjs.com/package/graphql-compose-aws)
 [![npm](https://img.shields.io/npm/dt/graphql-compose-aws.svg)](http://www.npmtrends.com/graphql-compose-aws)
@@ -10,45 +10,40 @@
 
 This module expose AWS SDK API via GraphQL.
 
+#### Live demo of [AWS SDK API via Graphiql](https://graphql-compose.herokuapp.com/aws/)
+Generated Schema Introspection in SDL format can be found [here](https://raw.githubusercontent.com/graphql-compose/graphql-compose-aws/master/examples/introspection/schema.txt) (more than 10k types, ~2MB).
+
 ## AWS SDK GraphQL
 
-Supported all AWS SDK versions that support official [aws-sdk](https://github.com/aws/aws-sdk-js) client. Internally it parses api schema files and generates all available methods with params and descriptions to GraphQL Field Config Map. You may put this config map to any GraphQL Schema.
+Supported all AWS SDK versions via official [aws-sdk](https://github.com/aws/aws-sdk-js) js client. Internally it generates Types and FieldConfigs from AWS SDK configs. You may put this generated types to any GraphQL Schema.
 
 ```js
 import { GraphQLSchema, GraphQLObjectType } from 'graphql';
-import elasticsearch from 'elasticsearch';
-import { elasticApiFieldConfig } from 'graphql-compose-aws';
+import awsSDK from 'aws-sdk';
+import { AwsApiParser } from 'graphql-compose-aws';
+
+const awsApiParser = new AwsApiParser({
+  awsSDK,
+});
 
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'Query',
     fields: {
-      elastic50: elasticApiFieldConfig(
-        // you may provide existed Elastic Client instance
-        new elasticsearch.Client({
-          host: 'http://localhost:9200',
-          apiVersion: '5.0',
-        })
-      ),
+      // Full API
+      aws: awsApiParser.getFieldConfig(),
 
-      // or may provide just config
-      elastic24: elasticApiFieldConfig({
-        host: 'http://user:pass@localhost:9200',
-        apiVersion: '2.4',
-      }),
-
-      elastic17: elasticApiFieldConfig({
-        host: 'http://user:pass@localhost:9200',
-        apiVersion: '1.7',
-      }),
+      // Partial API with desired services
+      s3: awsApiParser.getService('s3').getFieldConfig(),
+      ec2: awsApiParser.getService('ec2').getFieldConfig(),
     },
   }),
 });
+
+export default schema;
 ```
 
-Full [code example](https://github.com/graphql-compose/graphql-compose-aws/tree/master/examples/)
-
-Live demo of [Introspection of AWS SDK API via Graphiql](https://graphql-compose.herokuapp.com/aws/)
+Full [code examples](https://github.com/graphql-compose/graphql-compose-aws/tree/master/examples/)
 
 ## Installation
 ```
@@ -60,17 +55,11 @@ Modules `graphql`, `graphql-compose`, `aws-sdk` are in `peerDependencies`, so sh
 
 ## Screenshots
 
-### API proxy: Raw search method
-<img width="1316" alt="screen shot 2017-03-07 at 22 26 17" src="https://cloud.githubusercontent.com/assets/1946920/23859886/61066f40-082f-11e7-89d0-8443aa2ae930.png">
+### Get List of EC2 instances from `eu-west-1` region
+<img width="1185" alt="screen shot 2017-12-03 at 18 19 28" src="https://user-images.githubusercontent.com/1946920/33525931-c7092c7a-d862-11e7-947b-70380693cc8b.png">
 
-### API proxy: Getting several raw elastic metric in one request
-<img width="1314" alt="screen shot 2017-03-07 at 22 34 01" src="https://cloud.githubusercontent.com/assets/1946920/23859892/65e71744-082f-11e7-8c1a-cafeb87e08e6.png">
-
-### Mapping: Relay Cursor Connection
-<img width="1411" alt="screen shot 2017-03-22 at 19 34 09" src="https://cloud.githubusercontent.com/assets/1946920/24200219/a058c220-0f36-11e7-9cf1-38394052f922.png">
-
-### Mapping: Generated GraphQL Types and Documentation
-<img width="1703" alt="screen shot 2017-03-22 at 19 33 24" src="https://cloud.githubusercontent.com/assets/1946920/24200220/a05944b6-0f36-11e7-9919-39b7001af203.png">
+### Several requests in one query with different services and regions
+<img width="1184" alt="screen shot 2017-12-03 at 18 07 50" src="https://user-images.githubusercontent.com/1946920/33525932-c8507656-d862-11e7-9e66-4deb27b8f996.png">
 
 
 ## License
