@@ -11,7 +11,7 @@ export default class AwsShapes {
   shapes: ShapesMap;
   prefix: string;
   shapesInput: { [name: string]: ComposeInputType };
-  shapesOutput: { [name: string]: ComposeOutputType };
+  shapesOutput: { [name: string]: ComposeOutputType<*> };
 
   constructor(shapes: ShapesMap, prefix: string) {
     this.shapes = shapes;
@@ -39,7 +39,7 @@ export default class AwsShapes {
     return this.shapesInput[name];
   }
 
-  getOutputShape(name: string): ComposeOutputType {
+  getOutputShape(name: string): ComposeOutputType<*> {
     if (!this.shapesOutput[name]) {
       if (!this.shapes[name]) {
         throw new Error(`Shape with name '${name}' not found in service config ${this.prefix}`);

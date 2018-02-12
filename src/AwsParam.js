@@ -155,7 +155,7 @@ export default class AwsParam {
     name: string,
     isInput?: boolean,
     shapes?: AwsShapes
-  ): ComposeOutputType | ComposeInputType {
+  ): ComposeOutputType<*> | ComposeInputType {
     if (param.type) {
       switch (param.type) {
         case 'boolean':
@@ -198,7 +198,7 @@ export default class AwsParam {
     param: ParamShape,
     isInput?: boolean,
     shapes?: AwsShapes
-  ): ComposeOutputType | ComposeInputType {
+  ): ComposeOutputType<*> | ComposeInputType {
     if (shapes) {
       return isInput ? shapes.getInputShape(param.shape) : shapes.getOutputShape(param.shape);
     }
