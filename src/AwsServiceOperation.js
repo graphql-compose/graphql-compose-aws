@@ -89,7 +89,7 @@ export default class AwsServiceOperation {
           type = GraphQLJSON;
         } else {
           const hasRequiredFields = itc.getFieldNames().some(f => itc.isRequired(f));
-          type = hasRequiredFields ? (itc.getTypeAsRequired(): any) : itc.getType();
+          type = hasRequiredFields ? (itc.getTypeNonNull(): any) : itc.getType();
         }
 
         this.args = {
