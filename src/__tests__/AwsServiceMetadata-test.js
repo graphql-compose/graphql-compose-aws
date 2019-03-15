@@ -1,8 +1,8 @@
 /* @flow */
 
-import { TypeComposer } from 'graphql-compose';
+import { ObjectTypeComposer } from 'graphql-compose';
+import { AwsServiceMetadata } from '../AwsServiceMetadata';
 import s3Cfg from '../__mocks__/s3-2006-03-01.json';
-import AwsServiceMetadata from '../AwsServiceMetadata';
 
 const meta = new AwsServiceMetadata(s3Cfg.metadata);
 
@@ -13,7 +13,7 @@ describe('AwsServiceMetadata', () => {
 
   it('getTypeComposer()', () => {
     const tc = meta.getTypeComposer();
-    expect(tc).toBeInstanceOf(TypeComposer);
+    expect(tc).toBeInstanceOf(ObjectTypeComposer);
     expect(tc.getTypeName()).toBe('AwsS3Metadata');
     expect(tc.getFieldNames()).toMatchSnapshot();
   });

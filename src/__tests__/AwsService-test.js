@@ -1,7 +1,7 @@
 /* @flow */
 
-import AwsService from '../AwsService';
-import AwsServiceOperation from '../AwsServiceOperation';
+import { AwsService } from '../AwsService';
+import { AwsServiceOperation } from '../AwsServiceOperation';
 import s3Cfg from '../__mocks__/s3-2006-03-01.json';
 import AwsConfigITC from '../types/AwsConfigITC';
 

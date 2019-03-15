@@ -1,17 +1,17 @@
 /* @flow */
 
 import { type ComposeOutputType, type ComposeInputType } from 'graphql-compose';
-import AwsParam, { type Param } from './AwsParam';
+import { AwsParam, type Param } from './AwsParam';
 
 export type ShapesMap = {
   [name: string]: Param,
 };
 
-export default class AwsShapes {
+export class AwsShapes<TContext> {
   shapes: ShapesMap;
   prefix: string;
   shapesInput: { [name: string]: ComposeInputType };
-  shapesOutput: { [name: string]: ComposeOutputType<*> };
+  shapesOutput: { [name: string]: ComposeOutputType<any, TContext> };
 
   constructor(shapes: ShapesMap, prefix: string) {
     this.shapes = shapes;
@@ -39,7 +39,7 @@ export default class AwsShapes {
     return this.shapesInput[name];
   }
 
-  getOutputShape(name: string): ComposeOutputType<*> {
+  getOutputShape(name: string): ComposeOutputType<any, TContext> {
     if (!this.shapesOutput[name]) {
       if (!this.shapes[name]) {
         throw new Error(`Shape with name '${name}' not found in service config ${this.prefix}`);

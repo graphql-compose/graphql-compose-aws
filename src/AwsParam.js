@@ -1,7 +1,8 @@
 /* @flow */
 
 import {
-  TypeComposer,
+  schemaComposer,
+  ObjectTypeComposer,
   InputTypeComposer,
   upperFirst,
   type ComposeOutputType,
@@ -89,12 +90,12 @@ export type ParamStructure = {|
 
 type AwsShapes = any;
 
-export default class AwsParam {
+export class AwsParam<TContext = any> {
   static convertInputStructure(
     param: ParamStructure,
     name: string,
     shapes?: AwsShapes
-  ): InputTypeComposer {
+  ): InputTypeComposer<TContext> {
     const fields = {};
 
     if (param.members) {
@@ -108,7 +109,7 @@ export default class AwsParam {
       });
     }
 
-    const itc = InputTypeComposer.create({
+    const itc = schemaComposer.createInputTC({
       name: `${name}Input`,
       fields,
     });
@@ -124,7 +125,7 @@ export default class AwsParam {
     param: ParamStructure,
     name: string,
     shapes?: AwsShapes
-  ): TypeComposer {
+  ): ObjectTypeComposer<any, TContext> {
     const fields = {};
 
     if (param.members) {
@@ -138,7 +139,7 @@ export default class AwsParam {
       });
     }
 
-    const tc = TypeComposer.create({
+    const tc = schemaComposer.createObjectTC({
       name,
       fields,
     });
@@ -155,7 +156,7 @@ export default class AwsParam {
     name: string,
     isInput?: boolean,
     shapes?: AwsShapes
-  ): ComposeOutputType<*> | ComposeInputType {
+  ): ComposeOutputType<any, TContext> | ComposeInputType {
     if (param.type) {
       switch (param.type) {
         case 'boolean':
@@ -198,7 +199,7 @@ export default class AwsParam {
     param: ParamShape,
     isInput?: boolean,
     shapes?: AwsShapes
-  ): ComposeOutputType<*> | ComposeInputType {
+  ): ComposeOutputType<any, TContext> | ComposeInputType {
     if (shapes) {
       return isInput ? shapes.getInputShape(param.shape) : shapes.getOutputShape(param.shape);
     }

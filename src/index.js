@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default as AwsApiParser } from './AwsApiParser';
+export { AwsApiParser } from './AwsApiParser';

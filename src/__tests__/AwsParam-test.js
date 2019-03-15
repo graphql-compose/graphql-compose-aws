@@ -1,8 +1,8 @@
 /* @flow */
 
-import { TypeComposer, InputTypeComposer } from 'graphql-compose';
+import { ObjectTypeComposer, InputTypeComposer } from 'graphql-compose';
 import { GraphQLNonNull, GraphQLString } from 'graphql-compose/lib/graphql';
-import AwsParam from '../AwsParam';
+import { AwsParam } from '../AwsParam';
 
 describe('AwsParam', () => {
   describe('static convertParam()', () => {
@@ -41,7 +41,7 @@ describe('AwsParam', () => {
       };
 
       const t = AwsParam.convertParam(param, 'Name');
-      expect(t).toBeInstanceOf(TypeComposer);
+      expect(t).toBeInstanceOf(ObjectTypeComposer);
 
       const t2 = AwsParam.convertParam(param, 'Name', true);
       expect(t2).toBeInstanceOf(InputTypeComposer);
@@ -106,7 +106,7 @@ describe('AwsParam', () => {
     };
 
     const tc = AwsParam.convertOutputStructure(param, 'AwsS3Bucket');
-    expect(tc).toBeInstanceOf(TypeComposer);
+    expect(tc).toBeInstanceOf(ObjectTypeComposer);
     expect(tc.getTypeName()).toBe('AwsS3Bucket');
     expect(tc.getFieldType('Bucket')).toBeInstanceOf(GraphQLNonNull);
     expect((tc.getFieldType('Bucket'): any).ofType).toBe(GraphQLString);

@@ -1,8 +1,8 @@
 /* @flow */
 
 import awsSDK from 'aws-sdk';
-import AwsApiParser from '../AwsApiParser';
-import AwsService from '../AwsService';
+import { AwsApiParser } from '../AwsApiParser';
+import { AwsService } from '../AwsService';
 import AwsConfigITC from '../types/AwsConfigITC';
 
 describe('AwsApiParser', () => {

@@ -1,6 +1,6 @@
 /* @flow */
 
-import { TypeComposer, upperFirst } from 'graphql-compose';
+import { schemaComposer, ObjectTypeComposer, upperFirst } from 'graphql-compose';
 import type { GraphQLFieldConfig } from 'graphql-compose/lib/graphql';
 
 export type ServiceMetadataConfig = {
@@ -13,9 +13,9 @@ export type ServiceMetadataConfig = {
   uid: string,
 };
 
-export default class AwsServiceMetadata {
+export class AwsServiceMetadata<TContext> {
   metadata: ServiceMetadataConfig;
-  tc: ?TypeComposer;
+  tc: ?ObjectTypeComposer<any, TContext>;
 
   constructor(metadata: ServiceMetadataConfig) {
     this.metadata = metadata;
@@ -42,9 +42,9 @@ export default class AwsServiceMetadata {
     return `${serviceFullName} (${apiVersion})`;
   }
 
-  getTypeComposer(): TypeComposer {
+  getTypeComposer(): ObjectTypeComposer<any, TContext> {
     if (!this.tc) {
-      this.tc = TypeComposer.create(`
+      this.tc = schemaComposer.createObjectTC(`
         type ${this.getPrefix()}Metadata {
           apiVersion: String
           endpointPrefix: String

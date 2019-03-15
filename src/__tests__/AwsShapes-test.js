@@ -1,6 +1,6 @@
 /* @flow */
 
-import AwsShapes from '../AwsShapes';
+import { AwsShapes } from '../AwsShapes';
 
 describe('AwsShapes', () => {
   const shapes = new AwsShapes(

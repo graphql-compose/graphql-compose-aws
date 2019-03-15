@@ -7,7 +7,7 @@ import {
   GraphQLNonNull,
   isOutputType,
 } from 'graphql-compose/lib/graphql';
-import AwsServiceOperation from '../AwsServiceOperation';
+import { AwsServiceOperation } from '../AwsServiceOperation';
 import AwsConfigITC from '../types/AwsConfigITC';
 
 const operations = {

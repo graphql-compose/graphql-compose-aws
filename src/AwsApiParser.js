@@ -1,8 +1,8 @@
 /* @flow */
 
-import { TypeComposer } from 'graphql-compose';
+import { schemaComposer, ObjectTypeComposer } from 'graphql-compose';
 import type { GraphQLObjectType, GraphQLFieldConfig } from 'graphql-compose/lib/graphql';
-import AwsService, { type ServiceConfig } from './AwsService';
+import { AwsService, type ServiceConfig } from './AwsService';
 import AwsConfigITC from './types/AwsConfigITC';
 
 export type AwsSDK = any;
@@ -12,10 +12,10 @@ type AwsOpts = {|
   awsSDK?: AwsSDK,
 |};
 
-export default class AwsApiParser {
+export class AwsApiParser<TContext = any> {
   name: string;
   awsSDK: AwsSDK;
-  tc: TypeComposer;
+  tc: ObjectTypeComposer<any, TContext>;
   _serviceMap: { [serviceIdentifier: string]: string };
 
   constructor(opts: AwsOpts) {
@@ -61,7 +61,7 @@ export default class AwsApiParser {
     return cfg[versions[versions.length - 1]];
   }
 
-  getService(name: string): AwsService {
+  getService(name: string): AwsService<TContext> {
     const config = this.getServiceConfig(name);
     // console.log(config);
     return new AwsService({
@@ -72,14 +72,14 @@ export default class AwsApiParser {
     });
   }
 
-  getTypeComposer(): TypeComposer {
+  getTypeComposer(): ObjectTypeComposer<any, TContext> {
     if (!this.tc) {
       const fields = this.getServicesNames().reduce((res, name) => {
         res[this.getServiceIdentifier(name)] = this.getService(name).getFieldConfig();
         return res;
       }, {});
 
-      this.tc = TypeComposer.create({
+      this.tc = schemaComposer.createObjectTC({
         name: this.name,
         fields,
         description: `AWS SDK ${this.awsSDK.VERSION}`,

@@ -7,8 +7,8 @@ import type {
   GraphQLFieldResolver,
   GraphQLOutputType,
 } from 'graphql-compose/lib/graphql';
-import AwsParam, { type ParamStructure } from './AwsParam';
-import type AwsShapes from './AwsShapes';
+import { AwsParam, type ParamStructure } from './AwsParam';
+import type { AwsShapes } from './AwsShapes';
 import type { AwsSDK } from './AwsApiParser';
 import AwsConfigITC from './types/AwsConfigITC';
 
@@ -22,25 +22,25 @@ export type ServiceOperationConfig = {
   alias?: string,
 };
 
-type OperationOpts = {|
+type OperationOpts<TContext> = {|
   serviceId: string,
   name: string,
   prefix: string,
   config: ServiceOperationConfig,
-  shapes: AwsShapes,
+  shapes: AwsShapes<TContext>,
   awsSDK: AwsSDK,
 |};
 
-export default class AwsServiceOperation {
+export class AwsServiceOperation<TContext> {
   prefix: string;
   name: string;
   serviceId: string;
   awsSDK: AwsSDK;
   args: GraphQLFieldConfigArgumentMap;
   config: ServiceOperationConfig;
-  shapes: AwsShapes;
+  shapes: AwsShapes<TContext>;
 
-  constructor(opts: OperationOpts) {
+  constructor(opts: OperationOpts<TContext>) {
     this.prefix = opts.prefix;
     this.name = opts.name;
     this.serviceId = opts.serviceId;

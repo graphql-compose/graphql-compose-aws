@@ -1,8 +1,8 @@
 /* @flow */
 
-import { InputTypeComposer } from 'graphql-compose';
+import { schemaComposer } from 'graphql-compose';
 
-export default InputTypeComposer.create({
+export default schemaComposer.createInputTC({
   name: 'AwsConfig',
   fields: {
     accessKeyId: 'String',

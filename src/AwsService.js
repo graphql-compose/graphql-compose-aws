@@ -1,10 +1,10 @@
 /* @flow */
 
-import { TypeComposer, upperFirst } from 'graphql-compose';
+import { schemaComposer, ObjectTypeComposer, upperFirst } from 'graphql-compose';
 import type { GraphQLObjectType, GraphQLFieldConfig } from 'graphql-compose/lib/graphql';
-import AwsServiceMetadata, { type ServiceMetadataConfig } from './AwsServiceMetadata';
-import AwsServiceOperation, { type ServiceOperationConfig } from './AwsServiceOperation';
-import AwsShapes, { type ShapesMap } from './AwsShapes';
+import { AwsServiceMetadata, type ServiceMetadataConfig } from './AwsServiceMetadata';
+import { AwsServiceOperation, type ServiceOperationConfig } from './AwsServiceOperation';
+import { AwsShapes, type ShapesMap } from './AwsShapes';
 import type { AwsSDK } from './AwsApiParser';
 import AwsConfigITC from './types/AwsConfigITC';
 
@@ -26,14 +26,14 @@ type ServiceOpts = {|
   awsSDK: AwsSDK,
 |};
 
-export default class AwsService {
+export class AwsService<TContext> {
   prefix: string;
   serviceId: string;
   awsSDK: AwsSDK;
-  tc: ?TypeComposer;
+  tc: ?ObjectTypeComposer<any, TContext>;
   config: ServiceConfig;
-  metadata: AwsServiceMetadata;
-  shapes: AwsShapes;
+  metadata: AwsServiceMetadata<TContext>;
+  shapes: AwsShapes<TContext>;
 
   constructor(opts: ServiceOpts) {
     this.prefix = opts.prefix;
@@ -57,7 +57,7 @@ export default class AwsService {
     return Object.keys(this.config.operations);
   }
 
-  getOperation(name: string): AwsServiceOperation {
+  getOperation(name: string): AwsServiceOperation<TContext> {
     const operConfig = this.config.operations[name];
     if (!operConfig) {
       throw new Error(`Operation with name ${name} does not exist.`);
@@ -72,14 +72,14 @@ export default class AwsService {
     });
   }
 
-  getTypeComposer(): TypeComposer {
+  getTypeComposer(): ObjectTypeComposer<any, TContext> {
     if (!this.tc) {
       const fields = this.getOperationNames().reduce((res, name) => {
         res[this.constructor.lowerFirst(name)] = this.getOperation(name).getFieldConfig();
         return res;
       }, {});
 
-      this.tc = TypeComposer.create({
+      this.tc = schemaComposer.createObjectTC({
         name: this.getTypeName(),
         fields,
         description: this.metadata.getDescription(),
