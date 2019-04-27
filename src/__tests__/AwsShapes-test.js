@@ -16,7 +16,7 @@ describe('AwsShapes', () => {
   });
 
   it('getInputShape() from cache', () => {
-    shapes.shapesInput.cachedS1 = 'Cached';
+    (shapes: any).shapesInput.cachedS1 = 'Cached';
     expect(shapes.getInputShape('cachedS1')).toBe('Cached');
   });
 
@@ -25,7 +25,7 @@ describe('AwsShapes', () => {
   });
 
   it('getOutputShape() from cache', () => {
-    shapes.shapesOutput.cachedS2 = 'Cached';
+    (shapes: any).shapesOutput.cachedS2 = 'Cached';
     expect(shapes.getOutputShape('cachedS2')).toBe('Cached');
   });
 });

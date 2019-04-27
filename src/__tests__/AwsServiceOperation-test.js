@@ -1,12 +1,8 @@
 /* @flow */
 /* eslint-disable class-methods-use-this */
 
-import {
-  GraphQLInputObjectType,
-  GraphQLObjectType,
-  GraphQLNonNull,
-  isOutputType,
-} from 'graphql-compose/lib/graphql';
+import { NonNullComposer, InputTypeComposer } from 'graphql-compose';
+import { GraphQLObjectType } from 'graphql';
 import { AwsServiceOperation } from '../AwsServiceOperation';
 import AwsConfigITC from '../types/AwsConfigITC';
 
@@ -96,16 +92,16 @@ describe('AwsJsonParserOperation', () => {
 
   it('getType()', () => {
     const tc = oper.getType();
-    expect(isOutputType(tc)).toBeTruthy();
+    expect(tc).toBeInstanceOf(GraphQLObjectType);
   });
 
   it('getArgs()', () => {
     const args: any = oper.getArgs();
     expect(args.input).toBeDefined();
-    // input arg has required fields, so it wrapped by GraphQLNonNull
-    expect(args.input.type).toBeInstanceOf(GraphQLNonNull);
-    expect(args.input.type.ofType).toBeInstanceOf(GraphQLInputObjectType);
-    expect(args.input.type.ofType.name).toBe('AWSS3CreateBucketInput');
+    // input arg has required fields, so it wrapped by NonNullComposer
+    expect(args.input.type).toBeInstanceOf(NonNullComposer);
+    expect(args.input.type.ofType).toBeInstanceOf(InputTypeComposer);
+    expect(args.input.type.ofType.getTypeName()).toBe('AWSS3CreateBucketInput');
   });
 
   describe('getResolve()', () => {
