@@ -5,8 +5,8 @@ import {
   ObjectTypeComposer,
   InputTypeComposer,
   upperFirst,
-  type ComposeOutputType,
-  type ComposeInputType,
+  type ComposeOutputTypeDefinition,
+  type ComposeInputTypeDefinition,
 } from 'graphql-compose';
 
 type ParamsMap = {
@@ -156,7 +156,7 @@ export class AwsParam<TContext = any> {
     name: string,
     isInput?: boolean,
     shapes?: AwsShapes
-  ): ComposeOutputType<any, TContext> | ComposeInputType {
+  ): ComposeOutputTypeDefinition<TContext> | ComposeInputTypeDefinition {
     if (param.type) {
       switch (param.type) {
         case 'boolean':
@@ -199,7 +199,7 @@ export class AwsParam<TContext = any> {
     param: ParamShape,
     isInput?: boolean,
     shapes?: AwsShapes
-  ): ComposeOutputType<any, TContext> | ComposeInputType {
+  ): ComposeOutputTypeDefinition<TContext> | ComposeInputTypeDefinition {
     if (shapes) {
       return isInput ? shapes.getInputShape(param.shape) : shapes.getOutputShape(param.shape);
     }

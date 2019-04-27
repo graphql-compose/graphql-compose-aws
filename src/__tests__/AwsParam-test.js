@@ -1,7 +1,6 @@
 /* @flow */
 
 import { ObjectTypeComposer, InputTypeComposer } from 'graphql-compose';
-import { GraphQLNonNull, GraphQLString } from 'graphql-compose/lib/graphql';
 import { AwsParam } from '../AwsParam';
 
 describe('AwsParam', () => {
@@ -84,9 +83,8 @@ describe('AwsParam', () => {
     const itc = AwsParam.convertInputStructure(param, 'AwsS3Bucket');
     expect(itc).toBeInstanceOf(InputTypeComposer);
     expect(itc.getTypeName()).toBe('AwsS3BucketInput');
-    expect(itc.getFieldType('Bucket')).toBeInstanceOf(GraphQLNonNull);
-    expect((itc.getFieldType('Bucket'): any).ofType).toBe(GraphQLString);
-    expect(itc.getFieldType('Delimiter')).toBe(GraphQLString);
+    expect(itc.getFieldTypeName('Bucket')).toBe('String!');
+    expect(itc.getFieldTypeName('Delimiter')).toBe('String');
   });
 
   it('static convertOutputStructure()', () => {
@@ -108,8 +106,7 @@ describe('AwsParam', () => {
     const tc = AwsParam.convertOutputStructure(param, 'AwsS3Bucket');
     expect(tc).toBeInstanceOf(ObjectTypeComposer);
     expect(tc.getTypeName()).toBe('AwsS3Bucket');
-    expect(tc.getFieldType('Bucket')).toBeInstanceOf(GraphQLNonNull);
-    expect((tc.getFieldType('Bucket'): any).ofType).toBe(GraphQLString);
-    expect(tc.getFieldType('Delimiter')).toBe(GraphQLString);
+    expect(tc.getFieldTypeName('Bucket')).toBe('String!');
+    expect(tc.getFieldTypeName('Delimiter')).toBe('String');
   });
 });
