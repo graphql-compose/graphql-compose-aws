@@ -19,6 +19,7 @@
       "functions": "ignore"
     }],
     "no-plusplus": 0,
+    "max-classes-per-file": 0,
     "import/no-extraneous-dependencies": 0,
     "import/prefer-default-export": 0,
     "import/no-cycle": 0,
