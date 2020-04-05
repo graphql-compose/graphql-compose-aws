@@ -99,7 +99,7 @@ export class AwsParam<TContext = any> {
     const fields = {};
 
     if (param.members) {
-      Object.keys(param.members).forEach(fname => {
+      Object.keys(param.members).forEach((fname) => {
         fields[fname] = this.convertParam(
           param.members[fname],
           `${name}${upperFirst(fname)}`,
@@ -129,7 +129,7 @@ export class AwsParam<TContext = any> {
     const fields = {};
 
     if (param.members) {
-      Object.keys(param.members).forEach(fname => {
+      Object.keys(param.members).forEach((fname) => {
         fields[fname] = this.convertParam(
           param.members[fname],
           `${name}${upperFirst(fname)}`,

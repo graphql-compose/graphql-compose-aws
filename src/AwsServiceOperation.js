@@ -88,7 +88,7 @@ export class AwsServiceOperation<TContext> {
         if (Object.keys(itc.getFields()).length === 0) {
           type = GraphQLJSON;
         } else {
-          const hasRequiredFields = itc.getFieldNames().some(f => itc.isRequired(f));
+          const hasRequiredFields = itc.getFieldNames().some((f) => itc.isRequired(f));
           type = hasRequiredFields ? (itc.getTypeNonNull(): any) : itc.getType();
         }
 
