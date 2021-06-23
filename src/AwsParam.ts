@@ -110,8 +110,17 @@ export class AwsParam {
       });
     }
 
+    const typename = `${name}Input`;
+
+    if (schemaComposer.has(typename)) {
+      console.warn(
+        `Type ${typename} already exists. It seems that aws-sdk has types with same names. Reusing already existed type for GraphQL schema.`
+      );
+      return schemaComposer.get(typename) as any;
+    }
+
     const itc = schemaComposer.createInputTC({
-      name: `${name}Input`,
+      name: typename,
       fields,
     });
 

@@ -1,5 +1,5 @@
 import express from 'express';
-import graphqlHTTP from 'express-graphql';
+import { graphqlHTTP } from 'express-graphql';
 import schema from './schema';
 
 const expressPort = process.env.port || process.env.PORT || 4000;
