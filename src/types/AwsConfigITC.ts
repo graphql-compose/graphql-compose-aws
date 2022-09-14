@@ -5,6 +5,7 @@ export default schemaComposer.createInputTC({
   fields: {
     accessKeyId: 'String',
     secretAccessKey: 'String',
+    sessionToken: 'String',
     region: 'String',
   },
 });
